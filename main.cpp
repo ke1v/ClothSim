@@ -4,11 +4,11 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include "SFML/Window/Keyboard.hpp"
 #include <iostream>
 #include <vector>
 
 #include "Point.hpp"
-#include "SFML/Window/Keyboard.hpp"
 #include "Stick.hpp"
 
 const int WINDOW_SIZE = 1000;
@@ -35,10 +35,10 @@ int main(int, char**) {
 
 	for (int i = 0; i < points.size()-1; i++) {
 		if (i % width != width-1) {
-			sticks.push_back(Stick(points[i], points[i+1], spacing));
+			sticks.push_back(Stick(&points[i], &points[i+1], spacing));
 		}
 		if (i + width < points.size()) {
-			sticks.push_back(Stick(points[i], points[i+width], spacing));
+			sticks.push_back(Stick(&points[i], &points[i+width], spacing));
 		}
 	}
 
@@ -49,7 +49,9 @@ int main(int, char**) {
 		if (clock.getElapsedTime().asSeconds() < 0.01667f) continue;
 		sf::Time delta = clock.restart();
 
-		std::cout << "FPS: " << 1/delta.asSeconds() << std::endl;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+			std::cout << "FPS: " << 1/delta.asSeconds() << std::endl;
+		}
 
 		sf::Event event;
 		while (rwindow.pollEvent(event)) {
@@ -62,6 +64,7 @@ int main(int, char**) {
 					std::cout << "Start" << std::endl;
 				}
 				if (event.key.code == sf::Keyboard::D) {
+					// sticks.erase(sticks.begin());
 					points.erase(points.begin());
 				}
 			}
@@ -70,7 +73,15 @@ int main(int, char**) {
 		rwindow.clear();
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			
+			for (auto& p : points) {
+				sf::Vector2i mouse = sf::Mouse::getPosition(rwindow);
+				if (p.inPoint({(float)mouse.x, (float)mouse.y})) {
+					points.erase(std::remove(points.begin(), points.end(), p), points.end());
+					for (auto& s : sticks) {
+						if (s.hasPoint(p)) sticks.erase(std::remove(sticks.begin(), sticks.end(), s), sticks.end());
+					}
+				}
+			}
 		}
 
 		if (start) {

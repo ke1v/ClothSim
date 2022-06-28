@@ -30,7 +30,7 @@ void Point::changeState(State state) {
 	m_State = state;
 }
 
-bool Point::isPoint(sf::Vector2f location) {
+bool Point::inPoint(sf::Vector2f location) {
 	float dx = location.x - m_Position.x;
 	float dy = location.y - m_Position.y;
 	return std::sqrt(dx*dx + dy*dy) < radius;
@@ -45,15 +45,6 @@ void Point::update(float delta, sf::Vector2f acceleration /*= {0.f, 0.f}*/) {
 	sf::Vector2f tempPosition = m_Position;
 	m_Position = m_Position*2.f - m_PrevPosition + acceleration*delta*delta;
 	m_PrevPosition = tempPosition;
-
-	// sf::Vector2f v = m_Position - m_PrevPosition;
-	// sf::Vector2f d = {v.x*v.x*-signof(v.x), v.y*v.y*-signof(v.y)};
-	// if (drag > 1) drag = 1;
-	// d *= drag;
-	// v += acceleration;
-	// v += d;
-	// m_PrevPosition = m_Position;
-	// m_Position += v;
 
 	// To avoid overflows
 	if (m_Position.x > 10000 || m_Position.y > 10000) {
@@ -70,4 +61,8 @@ void Point::offest(sf::Vector2f offset) {
 
 sf::Vector2f Point::getPosition() const {
 	return m_Position;
+}
+
+bool Point::operator==(const Point p) const {
+	return m_Position == p.m_Position && m_PrevPosition == p.m_PrevPosition && m_State == p.m_State;
 }

@@ -20,10 +20,12 @@ public:
 	Point(sf::Vector2f position, sf::Vector2f prevPosition);
 	Point(sf::Vector2f position);
 
+	bool operator==(const Point p) const;
+
 	sf::Vector2f getPosition() const;
 	State getState() const;
 	void offest(sf::Vector2f offset);
-	bool isPoint(sf::Vector2f location);
+	bool inPoint(sf::Vector2f location);
 
 	void update(float delta, sf::Vector2f acceleration = {0.f, 0.f});
 	void changeState(State state);
