@@ -3,20 +3,29 @@
 #include <SFML/System/Vector2.hpp>
 
 class Point {
-
+public:
 	enum State {
-		Pinned = 0,
-		Free,
+		Free = 0,
+		Pinned,
 	};
 
+private:
+	sf::Vector2f m_PrevPosition;
 	sf::Vector2f m_Position;
-	sf::Vector2f m_Velocity;
-	sf::Vector2f m_Acceleration;
 
-	Point(sf::Vector2f position, sf::Vector2f velocity = {0.f, 0.f}, sf::Vector2f acceleration = {0.f, 0.f});
+	State m_State = Free;
 
-	void update();
+public:
+	Point(sf::Vector2f position, sf::Vector2f prevPosition);
+	Point(sf::Vector2f position);
+
+	sf::Vector2f getPosition() const;
+	State getState() const;
+	void offest(sf::Vector2f offset);
+	void DisplaySpeed() const;
+
+	void update(float delta, sf::Vector2f acceleration = {0.f, 0.f});
 	void changeState(State state);
 
-	void draw(sf::RenderWindow& rwindow);
+	void draw(sf::RenderWindow& rwindow) const;
 };

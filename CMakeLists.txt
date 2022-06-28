@@ -8,7 +8,7 @@ find_package(SFML COMPONENTS system window graphics audio REQUIRED)
 
 include_directories(${SFML_INCLUDE_DIR})
 
-add_executable(ClothSim main.cpp)
+add_executable(ClothSim main.cpp Point.hpp Point.cpp Stick.hpp Stick.cpp)
 
 target_link_libraries(ClothSim ${SFML_LIBRARIES})
 
