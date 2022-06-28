@@ -13,6 +13,7 @@ private:
 	sf::Vector2f m_PrevPosition;
 	sf::Vector2f m_Position;
 
+	int radius = 3;
 	State m_State = Free;
 
 public:
@@ -22,7 +23,7 @@ public:
 	sf::Vector2f getPosition() const;
 	State getState() const;
 	void offest(sf::Vector2f offset);
-	void DisplaySpeed() const;
+	bool isPoint(sf::Vector2f location);
 
 	void update(float delta, sf::Vector2f acceleration = {0.f, 0.f});
 	void changeState(State state);

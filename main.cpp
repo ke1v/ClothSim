@@ -2,6 +2,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <iostream>
 #include <vector>
@@ -60,12 +61,23 @@ int main(int, char**) {
 					start = true;
 					std::cout << "Start" << std::endl;
 				}
+				if (event.key.code == sf::Keyboard::D) {
+					points.erase(points.begin());
+				}
 			}
 		}
 
 		rwindow.clear();
 
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			
+		}
+
 		if (start) {
+			for (auto& s : sticks) {
+				s.constrainPoints();
+			}
+
 			for (auto& p : points) {
 				p.update(delta.asSeconds(), {(float)wind, 100.f});
 			}

@@ -1,6 +1,7 @@
 #include "Point.hpp"
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/System/Vector2.hpp"
+#include <cmath>
 #include <iostream>
 
 // Functino from https://stackoverflow.com/a/4609795
@@ -17,7 +18,6 @@ Point::Point(sf::Vector2f position)
 }
 
 void Point::draw(sf::RenderWindow& rwindow) const {
-	int radius = 5;
 	sf::CircleShape c(radius);
 	c.setFillColor(m_State == State::Pinned ? sf::Color::Red : sf::Color::White);
 	c.setOrigin(radius, radius);
@@ -30,9 +30,10 @@ void Point::changeState(State state) {
 	m_State = state;
 }
 
-void Point::DisplaySpeed() const {
-	sf::Vector2f v = m_PrevPosition - m_Position;
-	std::cout << v.x << ", " << v.y << std::endl;
+bool Point::isPoint(sf::Vector2f location) {
+	float dx = location.x - m_Position.x;
+	float dy = location.y - m_Position.y;
+	return std::sqrt(dx*dx + dy*dy) < radius;
 }
 
 Point::State Point::getState() const {
