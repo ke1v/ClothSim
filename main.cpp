@@ -48,6 +48,8 @@ int main(int, char**) {
 		if (clock.getElapsedTime().asSeconds() < 0.01667f) continue;
 		sf::Time delta = clock.restart();
 
+		std::cout << "FPS: " << 1/delta.asSeconds() << std::endl;
+
 		sf::Event event;
 		while (rwindow.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
