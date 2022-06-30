@@ -23,22 +23,23 @@ int main(int, char**) {
 	sf::RenderWindow rwindow(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Verlet Cloth Simulator");
 	sf::Clock clock;
 
-	std::vector<Point> points;
+	std::vector<Point*> points;
 	std::vector<Stick> sticks;
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < height; j++) {
 			// points.push_back(Point({i*100.f+150.f, j*100.f+100.f}, {i*100.f+140.f, j*100.f+90.f}));
-			points.push_back(Point({i*spacing+100.f, j*spacing+100.f}));
-			if (j == 0 && i % pin == 0) points[i*height+j].changeState(Point::State::Pinned);
+			Point* p = new Point({i*spacing+100.f, j*spacing+100.f});
+			points.push_back(p);
+			if (j == 0 && i % pin == 0) points[i*height+j]->changeState(Point::State::Pinned);
 		}
 	}
 
 	for (int i = 0; i < points.size()-1; i++) {
 		if (i % width != width-1) {
-			sticks.push_back(Stick(&points[i], &points[i+1], spacing));
+			sticks.push_back(Stick(points[i], points[i+1], spacing));
 		}
 		if (i + width < points.size()) {
-			sticks.push_back(Stick(&points[i], &points[i+width], spacing));
+			sticks.push_back(Stick(points[i], points[i+width], spacing));
 		}
 	}
 
@@ -60,8 +61,7 @@ int main(int, char**) {
 			}
 			if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::U) {
-					start = true;
-					std::cout << "Start" << std::endl;
+					start = !start;
 				}
 				if (event.key.code == sf::Keyboard::D) {
 					// sticks.erase(sticks.begin());
@@ -73,13 +73,20 @@ int main(int, char**) {
 		rwindow.clear();
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			for (auto& p : points) {
+			for (auto p : points) {
 				sf::Vector2i mouse = sf::Mouse::getPosition(rwindow);
-				if (p.inPoint({(float)mouse.x, (float)mouse.y})) {
+				if (p->inPoint({(float)mouse.x, (float)mouse.y})) {
 					points.erase(std::remove(points.begin(), points.end(), p), points.end());
-					for (auto& s : sticks) {
-						if (s.hasPoint(p)) sticks.erase(std::remove(sticks.begin(), sticks.end(), s), sticks.end());
+					for (int i = 0; i < sticks.size(); i++) {
+						if (sticks[i].hasPoint(*p)) {
+							sticks.erase(std::remove(sticks.begin(), sticks.end(), sticks[i]), sticks.end());
+							i--;
+							// std::cout << "S" << std::endl;
+						}
 					}
+					delete p;
+					// std::cout << "P" << std::endl;
+					break;
 				}
 			}
 		}
@@ -90,7 +97,7 @@ int main(int, char**) {
 			}
 
 			for (auto& p : points) {
-				p.update(delta.asSeconds(), {(float)wind, 100.f});
+				p->update(delta.asSeconds(), {(float)wind, 100.f});
 			}
 
 			for (auto& s : sticks) {
@@ -102,10 +109,14 @@ int main(int, char**) {
 			s.draw(rwindow);
 		}
 		for (auto& p : points) {
-			p.draw(rwindow);
+			p->draw(rwindow);
 		}
 
 		rwindow.display();
+	}
+
+	for (int i = 0; i < points.size(); i++) {
+		delete points[i];
 	}
 
 	return 0;

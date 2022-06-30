@@ -13,7 +13,7 @@ private:
 	sf::Vector2f m_PrevPosition;
 	sf::Vector2f m_Position;
 
-	int radius = 3;
+	int radius = 5;
 	State m_State = Free;
 
 public:
